@@ -5,12 +5,11 @@
 
 int main(void) {
     /* 1. Declaracao de todas as variaveis no inicio da funcao (regra C89/C90) */
+    
     int escolha;
     int linhas, colunas;
     int i, j;
-    int matriz[2][3];
-
-   
+    int matriz[MAX][MAX];
 
     /* 2. Menu dentro da funcao main */
     printf("=============================================\n");
@@ -32,6 +31,18 @@ int main(void) {
     scanf("%d", &linhas , "\n");
     printf("Escolha a quantidade de colunas da sua matriz (1 a 15) : ");
     scanf("%d", &colunas , "\n");
+    
+    while (linhas > 15 || colunas > 15){
+        
+        printf("=============================================\n");
+        printf("! Os valores devem estar dentro do limite ! \n");
+        printf("=============================================\n");
+
+        printf("Escolha a quantidade de linhas da sua matriz (1 a 15) : ");
+        scanf("%d", &linhas , "\n");
+        printf("Escolha a quantidade de colunas da sua matriz (1 a 15) : ");
+        scanf("%d", &colunas , "\n");
+    }
 
     /* 3. Leitura da matriz dentro da main (ou de outra funcao) */
     for (i = 0; i < linhas; i++) {
