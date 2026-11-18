@@ -32,7 +32,7 @@ int main(void) {
     printf("Escolha a quantidade de colunas da sua matriz (1 a 15) : ");
     scanf("%d", &colunas , "\n");
     
-    while (linhas > 15 || colunas > 15){
+    while (linhas > MAX || colunas > MAX){
         
         printf("=============================================\n");
         printf("! Os valores devem estar dentro do limite ! \n");
@@ -42,6 +42,7 @@ int main(void) {
         scanf("%d", &linhas , "\n");
         printf("Escolha a quantidade de colunas da sua matriz (1 a 15) : ");
         scanf("%d", &colunas , "\n");
+        
     }
 
     /* 3. Leitura da matriz dentro da main (ou de outra funcao) */
@@ -51,6 +52,6 @@ int main(void) {
             scanf("%d", &matriz[i][j]);
         }
     }
-
+    
     return 0;
 }
