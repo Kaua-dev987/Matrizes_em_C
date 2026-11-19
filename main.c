@@ -1,219 +1,75 @@
 #include <stdio.h>
+#include <math.h>
+
 #define MAX 15
 
-/* PROTOTIPOS DAS FUNCOES GLOBAIS */
-int ler_inteiro_intervalo(int minimo, int maximo);
-double ler_double_seguro(void);
-void ler_matriz(double matriz[MAX][MAX], 
-                int quantidade_linhas, 
-                int quantidade_colunas, 
-                const char *nome_matriz);
-void somar_matrizes(double matriz_a[MAX][MAX], 
-                    double matriz_b[MAX][MAX], 
-                    double matriz_resultado[MAX][MAX], 
-                    int quantidade_linhas, 
-                    int quantidade_colunas);
-void calcular_matriz_inversa(double matriz_a[MAX][MAX], 
-                             double matriz_resultado[MAX][MAX], 
-                             int quantidade_linhas, 
-                             int quantidade_colunas);
+void determinate_matriz(int *linhas, int *colunas, double matriz[MAX][MAX])
+{
+    double determinante;
 
-
-/* FUNCAO PRINCIPAL (main) */
-int main(void) {
-    /* Declaracao de todas as variaveis no inicio da funcao (regra C89/C90) */
-    int opcao_escolhida;
-    int continuar_programa;
-    int quantidade_linhas;
-    int quantidade_colunas;
-
-    /* Usa 'double' para aceitar numeros decimais na matriz inversa */
-    double matriz_a[MAX][MAX];
-    double matriz_b[MAX][MAX];
-    double matriz_resultado[MAX][MAX];
-
-    continuar_programa = 1;
-
-    /* Laco principal: repete o programa ate o usuario digitar 0 para sair */
-    while (continuar_programa == 1) {
-        printf("=============================================\n");
-        printf("            Calculadora de Matrizes          \n");
-        printf("=============================================\n");
-        printf(" 1 - Adicao de matrizes;\n");
-        printf(" 2 - Subtracao de matrizes;\n");
-        printf(" 3 - Produto de um numero por uma matriz;\n");
-        printf(" 4 - Produto de matrizes;\n");
-        printf(" 5 - Calculo de Determinante;\n");
-        printf(" 6 - Matriz inversa;\n");
-        printf(" 7 - Matriz transposta;\n");
-        printf("=============================================\n");
-        printf("Escolha uma das operacoes (1 a 7): ");
-        opcao_escolhida = ler_inteiro_intervalo(1, 7);
-
-        printf("=============================================\n");
-        printf("Opcao escolhida: %d\n\n", opcao_escolhida);
-
-        /* Direciona para a operacao escolhida */
-        if (opcao_escolhida == 1) {
-            printf("================= ADICAO DE MATRIZES =================\n");
-            printf("Escolha a quantidade de linhas das matrizes (1 a %d): ", MAX);
-            quantidade_linhas = ler_inteiro_intervalo(1, MAX);
-
-            printf("Escolha a quantidade de colunas das matrizes (1 a %d): ", MAX);
-            quantidade_colunas = ler_inteiro_intervalo(1, MAX);
-
-            ler_matriz(matriz_a, quantidade_linhas, quantidade_colunas, "A");
-            ler_matriz(matriz_b, quantidade_linhas, quantidade_colunas, "B");
-
-            somar_matrizes(matriz_a, matriz_b, matriz_resultado, quantidade_linhas, quantidade_colunas);
-        }
-
-        else if (opcao_escolhida == 6) {
-            printf("================= MATRIZ INVERSA =================\n");
-            printf("Informe a quantidade de linhas da matriz (1 a %d): ", MAX);
-            quantidade_linhas = ler_inteiro_intervalo(1, MAX);
-
-            printf("Informe a quantidade de colunas da matriz (1 a %d): ", MAX);
-            quantidade_colunas = ler_inteiro_intervalo(1, MAX);
-
-            /* Verifica se as quantidades digitadas formam uma matriz quadrada */
-            if (quantidade_linhas != quantidade_colunas) {
-                printf("\nErro: Para calcular a inversa, a matriz deve ser quadrada!\n");
-            } else {
-                ler_matriz(matriz_a, quantidade_linhas, quantidade_colunas, "A");
-                calcular_matriz_inversa(matriz_a, matriz_resultado, quantidade_linhas, quantidade_colunas);
-            }
-        }
-
-        else {
-            printf("\nOpcao ainda nao implementada!\n");
-        }
-
-        /* Repete a pergunta de continuar enquanto nao digitar 0 ou 1 */
-        printf("\nDeseja realizar outro calculo? (1 - Sim / 0 - Sair): ");
-        continuar_programa = ler_inteiro_intervalo(0, 1);
-        printf("\n");
+    if (*linhas != *colunas)
+    {
+        printf("Matrizes retangulares não possuem determinantes.\n");
+        return;
+    }
+    else if (*linhas == 2)
+    {
+        determinante =
+            (matriz[0][0] * matriz[1][1]) -
+            (matriz[0][1] * matriz[1][0]);
+    }
+    else if (*linhas == 3)
+    {
+        determinante =
+            (matriz[0][0] * matriz[1][1] * matriz[2][2]) +
+            (matriz[0][1] * matriz[1][2] * matriz[2][0]) +
+            (matriz[0][2] * matriz[1][0] * matriz[2][1]) -
+            (matriz[0][2] * matriz[1][1] * matriz[2][0]) -
+            (matriz[0][0] * matriz[1][2] * matriz[2][1]) -
+            (matriz[0][1] * matriz[1][0] * matriz[2][2]);
+    }
+    else if (*linhas == 4)
+    {
+        determinante =
+            (matriz[0][0] * ((matriz[1][1] * matriz[2][2] * matriz[3][3]) +
+                             (matriz[1][2] * matriz[2][3] * matriz[3][1]) +
+                             (matriz[1][3] * matriz[2][1] * matriz[3][2]) -
+                             (matriz[1][3] * matriz[2][2] * matriz[3][1]) -
+                             (matriz[1][1] * matriz[2][3] * matriz[3][2]) -
+                             (matriz[1][2] * matriz[2][1] * matriz[3][3]))) -
+            (matriz[0][1] * ((matriz[1][0] * matriz[2][2] * matriz[3][3]) +
+                             (matriz[1][2] * matriz[2][3] * matriz[3][0]) +
+                             (matriz[1][3] * matriz[2][0] * matriz[3][2]) -
+                             (matriz[1][3] * matriz[2][2] * matriz[3][0]) -
+                             (matriz[1][0] * matriz[2][3] * matriz[3][2]) -
+                             (matriz[1][2] * matriz[2][0] * matriz[3][3]))) +
+            (matriz[0][2] * ((matriz[1][0] * matriz[2][1] * matriz[3][3]) +
+                             (matriz[1][1] * matriz[2][3] * matriz[3][0]) +
+                             (matriz[1][3] * matriz[2][0] * matriz[3][1]) -
+                             (matriz[1][3] * matriz[2][1] * matriz[3][0]) -
+                             (matriz[1][0] * matriz[2][3] * matriz[3][1]) -
+                             (matriz[1][1] * matriz[2][0] * matriz[3][3]))) -
+            (matriz[0][3] * ((matriz[1][0] * matriz[2][1] * matriz[3][2]) +
+                             (matriz[1][1] * matriz[2][2] * matriz[3][0]) +
+                             (matriz[1][2] * matriz[2][0] * matriz[3][1]) -
+                             (matriz[1][2] * matriz[2][1] * matriz[3][0]) -
+                             (matriz[1][0] * matriz[2][2] * matriz[3][1]) -
+                             (matriz[1][1] * matriz[2][0] * matriz[3][2])));
+    }
+    else
+    {
+        printf("Determinante implementado apenas para matrizes 2x2, 3x3 e 4x4.\n");
+        return;
     }
 
-    return 0;
+    printf("=============================================\n");
+    printf("               Determinante :                \n");
+    printf("%.2lf\n", determinante);
+    printf("=============================================\n");
 }
 
-/* ============================================================================
-- IMPLEMENTACAO DAS FUNCOES GLOBAIS
-- ============================================================================ */
-
-/* Funcao auxiliar: le inteiro no intervalo [minimo, maximo] aceitando espacos e rejeitando letras */
-int ler_inteiro_intervalo(int minimo, int maximo) {
-    int valor;
-    char proximo_char;
-    int leitura_valida;
-    int tem_lixo;
-
-    leitura_valida = 0;
-
-    while (leitura_valida == 0) {
-        if (scanf("%d", &valor) == 1) {
-            tem_lixo = 0;
-
-            /* Verifica caractere por caractere ate o Enter ('\n') */
-            proximo_char = getchar();
-            while (proximo_char != '\n') {
-                /* Aceita espacos ou tabs extras antes do Enter; rejeita qualquer letra ou simbolo */
-                if (proximo_char != ' ' && proximo_char != '\t') {
-                    tem_lixo = 1;
-                }
-                proximo_char = getchar();
-            }
-
-            if (tem_lixo == 0 && valor >= minimo && valor <= maximo) {
-                leitura_valida = 1;
-            } else {
-                printf("Valor invalido! Digite um numero entre %d e %d: ", minimo, maximo);
-            }
-        } else {
-            /* Limpa todo o lixo restante no buffer ate o Enter */
-            while (getchar() != '\n');
-            printf("Valor invalido! Digite apenas um numero entre %d e %d: ", minimo, maximo);
-        }
-    }
-
-    return valor;
-}
-
-/* Funcao auxiliar: le numero real (double) aceitando espacos, rejeitando letras e valores extremos */
-double ler_double_seguro(void) {
-    double valor;
-    char proximo_char;
-    int leitura_valida;
-    int tem_lixo;
-
-    leitura_valida = 0;
-
-    while (leitura_valida == 0) {
-        if (scanf("%lf", &valor) == 1) {
-            tem_lixo = 0;
-
-            proximo_char = getchar();
-            while (proximo_char != '\n') {
-                if (proximo_char != ' ' && proximo_char != '\t') {
-                    tem_lixo = 1;
-                }
-                proximo_char = getchar();
-            }
-
-            /* Garante que nao houve letras e evita valores extremos que causam overflow/underflow */
-            if (tem_lixo == 0 && valor > -1e50 && valor < 1e50) {
-                leitura_valida = 1;
-            } else {
-                printf("Valor invalido! Digite um numero valido: ");
-            }
-        } else {
-            while (getchar() != '\n');
-            printf("Valor invalido! Digite apenas um numero valido: ");
-        }
-    }
-
-    return valor;
-}
-
-/* Funcao global para ler os elementos da matriz; exibe indices a partir de [1][1] */
-void ler_matriz(double matriz[MAX][MAX], int quantidade_linhas, int quantidade_colunas, const char *nome_matriz) {
-    int indice_linha;
-    int indice_coluna;
-
-    printf("\n--- Preenchendo a Matriz %s ---\n", nome_matriz);
-    for (indice_linha = 0; indice_linha < quantidade_linhas; indice_linha++) {
-        for (indice_coluna = 0; indice_coluna < quantidade_colunas; indice_coluna++) {
-            printf("Digite o valor para posicao [%d][%d]: ", indice_linha + 1, indice_coluna + 1);
-            matriz[indice_linha][indice_coluna] = ler_double_seguro();
-        }
-    }
-}
-
-/* Funcao global 1: Soma Matriz A + Matriz B e exibe o resultado */
-void somar_matrizes(double matriz_a[MAX][MAX], double matriz_b[MAX][MAX], double matriz_resultado[MAX][MAX], int quantidade_linhas, int quantidade_colunas) {
-    int indice_linha;
-    int indice_coluna;
-
-    printf("\nResultado da Adicao (A + B):\n");
-    for (indice_linha = 0; indice_linha < quantidade_linhas; indice_linha++) {
-        for (indice_coluna = 0; indice_coluna < quantidade_colunas; indice_coluna++) {
-            matriz_resultado[indice_linha][indice_coluna] = matriz_a[indice_linha][indice_coluna] + matriz_b[indice_linha][indice_coluna];
-            
-            /* Evita imprimir -0.00 */
-            if (matriz_resultado[indice_linha][indice_coluna] > -1e-9 &&
-                matriz_resultado[indice_linha][indice_coluna] < 1e-9) {
-                matriz_resultado[indice_linha][indice_coluna] = 0.0;
-            }
-
-            printf("%10.2f ", matriz_resultado[indice_linha][indice_coluna]);
-        }
-        printf("\n");
-    }
-}
-
-/* Funcao global 6: Calcula e exibe a Matriz Inversa de qualquer ordem (1x1 ate MAXxMAX) */
-void calcular_matriz_inversa(double matriz_a[MAX][MAX], double matriz_resultado[MAX][MAX], int quantidade_linhas, int quantidade_colunas) {
+void calcular_matriz_inversa(double matriz[MAX][MAX], double resultado[MAX][MAX], int *linhas, int *colunas)
+{
     int indice_linha;
     int indice_coluna;
     int passo;
@@ -226,94 +82,597 @@ void calcular_matriz_inversa(double matriz_a[MAX][MAX], double matriz_resultado[
     double fator;
     double temporario;
 
-    /* Verifica se a matriz e quadrada (linhas == colunas) */
-    if (quantidade_linhas != quantidade_colunas) {
+    if (*linhas != *colunas)
+    {
         printf("\nErro: Para calcular a inversa, linhas e colunas devem ser iguais!\n");
         return;
     }
 
-    ordem = quantidade_linhas;
+    ordem = *linhas;
 
-    /* 1. Monta a matriz estendida [A | I] */
-    for (indice_linha = 0; indice_linha < ordem; indice_linha++) {
-        for (indice_coluna = 0; indice_coluna < ordem; indice_coluna++) {
-            matriz_estendida[indice_linha][indice_coluna] = matriz_a[indice_linha][indice_coluna];
+    for (indice_linha = 0; indice_linha < ordem; indice_linha++)
+    {
+        for (indice_coluna = 0; indice_coluna < ordem; indice_coluna++)
+        {
+            matriz_estendida[indice_linha][indice_coluna] = matriz[indice_linha][indice_coluna];
 
-            /* Preenche o lado direito com a Matriz Identidade */
-            if (indice_linha == indice_coluna) {
+            if (indice_linha == indice_coluna)
+            {
                 matriz_estendida[indice_linha][indice_coluna + ordem] = 1.0;
-            } else {
+            }
+            else
+            {
                 matriz_estendida[indice_linha][indice_coluna + ordem] = 0.0;
             }
         }
     }
 
-    /* 2. Aplica a Eliminacao de Gauss-Jordan */
-    for (passo = 0; passo < ordem; passo++) {
-        /* Pivoteamento parcial: busca o maior elemento na coluna atual para evitar divisao por zero */
+    for (passo = 0; passo < ordem; passo++)
+    {
         linha_pivo = passo;
         maior_valor = matriz_estendida[passo][passo];
-        if (maior_valor < 0.0) {
+        if (maior_valor < 0.0)
+        {
             maior_valor = -maior_valor;
         }
 
-        for (indice_linha = passo + 1; indice_linha < ordem; indice_linha++) {
+        for (indice_linha = passo + 1; indice_linha < ordem; indice_linha++)
+        {
             valor_absoluto = matriz_estendida[indice_linha][passo];
-            if (valor_absoluto < 0.0) {
+            if (valor_absoluto < 0.0)
+            {
                 valor_absoluto = -valor_absoluto;
             }
-            if (valor_absoluto > maior_valor) {
+            if (valor_absoluto > maior_valor)
+            {
                 maior_valor = valor_absoluto;
                 linha_pivo = indice_linha;
             }
         }
 
-        /* Se o maior pivo da coluna for zero, o determinante e zero (nao tem inversa) */
-        if (maior_valor < 1e-12) {
-            printf("\nDeterminante = 0. Esta matriz NAO possui inversa!\n");
+        if (maior_valor < 1e-12)
+        {
+            printf("Esta matriz NAO possui inversa!\n");
             return;
         }
 
-        /* Troca a linha atual pela linha com o maior pivo, se necessario */
-        if (linha_pivo != passo) {
-            for (indice_coluna = 0; indice_coluna < 2 * ordem; indice_coluna++) {
+        if (linha_pivo != passo)
+        {
+            for (indice_coluna = 0; indice_coluna < 2 * ordem; indice_coluna++)
+            {
                 temporario = matriz_estendida[passo][indice_coluna];
                 matriz_estendida[passo][indice_coluna] = matriz_estendida[linha_pivo][indice_coluna];
                 matriz_estendida[linha_pivo][indice_coluna] = temporario;
             }
         }
 
-        /* Divide a linha do pivo pelo proprio pivo para que ele vire 1 */
         pivo = matriz_estendida[passo][passo];
-        for (indice_coluna = 0; indice_coluna < 2 * ordem; indice_coluna++) {
+        for (indice_coluna = 0; indice_coluna < 2 * ordem; indice_coluna++)
+        {
             matriz_estendida[passo][indice_coluna] = matriz_estendida[passo][indice_coluna] / pivo;
         }
 
-        /* Zera todos os outros elementos acima e abaixo do pivo na coluna atual */
-        for (indice_linha = 0; indice_linha < ordem; indice_linha++) {
-            if (indice_linha != passo) {
+        for (indice_linha = 0; indice_linha < ordem; indice_linha++)
+        {
+            if (indice_linha != passo)
+            {
                 fator = matriz_estendida[indice_linha][passo];
-                for (indice_coluna = 0; indice_coluna < 2 * ordem; indice_coluna++) {
+                for (indice_coluna = 0; indice_coluna < 2 * ordem; indice_coluna++)
+                {
                     matriz_estendida[indice_linha][indice_coluna] -= fator * matriz_estendida[passo][indice_coluna];
                 }
             }
         }
     }
 
-    /* 3. Copia o lado direito (agora a inversa) para matriz_resultado e exibe */
     printf("\nMatriz Inversa (%dx%d):\n", ordem, ordem);
-    for (indice_linha = 0; indice_linha < ordem; indice_linha++) {
-        for (indice_coluna = 0; indice_coluna < ordem; indice_coluna++) {
-            matriz_resultado[indice_linha][indice_coluna] = matriz_estendida[indice_linha][indice_coluna + ordem];
+    for (indice_linha = 0; indice_linha < ordem; indice_linha++)
+    {
+        for (indice_coluna = 0; indice_coluna < ordem; indice_coluna++)
+        {
+            resultado[indice_linha][indice_coluna] = matriz_estendida[indice_linha][indice_coluna + ordem];
 
-            /* Evita imprimir -0.00 */
-            if (matriz_resultado[indice_linha][indice_coluna] > -1e-9 &&
-                matriz_resultado[indice_linha][indice_coluna] < 1e-9) {
-                matriz_resultado[indice_linha][indice_coluna] = 0.0;
+            if (resultado[indice_linha][indice_coluna] > -1e-9 &&
+                resultado[indice_linha][indice_coluna] < 1e-9)
+            {
+                resultado[indice_linha][indice_coluna] = 0.0;
             }
 
-            printf("%10.2f ", matriz_resultado[indice_linha][indice_coluna]);
+            printf("%10.2f ", resultado[indice_linha][indice_coluna]);
         }
         printf("\n");
     }
+}
+
+void somar_matrizes(double matriz[MAX][MAX], double matrizB[MAX][MAX], double resultado[MAX][MAX], int *linhas, int *colunas)
+{
+    int indice_linha;
+    int indice_coluna;
+
+    printf("\nResultado da Adicao (A + B):\n");
+    for (indice_linha = 0; indice_linha < *linhas; indice_linha++)
+    {
+        for (indice_coluna = 0; indice_coluna < *colunas; indice_coluna++)
+        {
+            resultado[indice_linha][indice_coluna] = matriz[indice_linha][indice_coluna] + matrizB[indice_linha][indice_coluna];
+
+            if (resultado[indice_linha][indice_coluna] > -1e-9 &&
+                resultado[indice_linha][indice_coluna] < 1e-9)
+            {
+                resultado[indice_linha][indice_coluna] = 0.0;
+            }
+
+            printf("%10.2f ", resultado[indice_linha][indice_coluna]);
+        }
+        printf("\n");
+    }
+}
+
+int menu(int *escolha, int *linhas, int *colunas, int *linhas_2, int *colunas_2, double *multiplicador, double matriz[MAX][MAX], double matrizB[MAX][MAX])
+{
+    int i, j;
+
+    printf("=============================================\n");
+    printf("            Calculadora de Matrizes          \n");
+    printf("=============================================\n");
+    printf(" 1 - Adicao de matrizes;\n");
+    printf(" 2 - Subtracao de matrizes;\n");
+    printf(" 3 - Produto de um numero por uma matriz;\n");
+    printf(" 4 - Produto de matrizes;\n");
+    printf(" 5 - Calculo de Determinante;\n");
+    printf(" 6 - Matriz inversa;\n");
+    printf(" 7 - Matriz transposta;\n");
+    printf("=============================================\n");
+    printf("Escolha uma das operacoes (1 a 7): ");
+
+    if (scanf("%d", escolha) != 1)
+    {
+        printf("Entrada invalida!\n");
+        return 1;
+    }
+
+    printf("=============================================\n");
+
+    if (*escolha == 3 || *escolha == 5 || *escolha == 6 || *escolha == 7)
+    {
+        switch (*escolha)
+        {
+        case 3:
+            printf("Opcao escolhida: Produto de um numero por uma matriz\n");
+            printf("Por qual numero que vc deseja multiplicar a sua matriz? : ");
+            if (scanf("%lf", multiplicador) != 1)
+            {
+                printf("Entrada invalida!\n");
+                return 1;
+            }
+            break;
+        case 5:
+            printf("Opcao escolhida: Calculo de Determinante\n");
+            break;
+        case 6:
+            printf("Opcao escolhida: Matriz inversa\n");
+            break;
+        case 7:
+            printf("Opcao escolhida: Matriz transposta\n");
+            break;
+        }
+
+        printf("Escolha a quantidade de linhas da sua matriz (1 a 15) : ");
+        if (scanf("%d", linhas) != 1)
+        {
+            printf("Entrada invalida!\n");
+            return 1;
+        }
+        printf("Escolha a quantidade de colunas da sua matriz (1 a 15) : ");
+        if (scanf("%d", colunas) != 1)
+        {
+            printf("Entrada invalida!\n");
+            return 1;
+        }
+
+        while (*linhas > MAX || *colunas > MAX || *linhas <= 0 || *colunas <= 0)
+        {
+            printf("=============================================\n");
+            printf("! Os valores devem estar dentro do limite ! \n");
+            printf("=============================================\n");
+
+            printf("Escolha a quantidade de linhas da sua matriz (1 a 15) : ");
+            if (scanf("%d", linhas) != 1)
+                return 1;
+
+            printf("Escolha a quantidade de colunas da sua matriz (1 a 15) : ");
+            if (scanf("%d", colunas) != 1)
+                return 1;
+        }
+
+        for (i = 0; i < *linhas; i++)
+        {
+            for (j = 0; j < *colunas; j++)
+            {
+                printf("Digite o valor para posicao (1 matriz)[%d][%d]: ", i + 1, j + 1);
+                if (scanf("%lf", &matriz[i][j]) != 1)
+                {
+                    printf("Entrada invalida!\n");
+                    return 1;
+                }
+            }
+        }
+    }
+    else
+    {
+        switch (*escolha)
+        {
+        case 1:
+            printf("Opcao escolhida: Adicao de matrizes\n");
+            break;
+        case 2:
+            printf("Opcao escolhida: Subtracao de matrizes\n");
+            break;
+        case 4:
+            printf("Opcao escolhida: Produto de matrizes\n");
+            break;
+        default:
+            printf("Opcao invalida!\n");
+            return 1;
+        }
+
+        printf("Escolha a quantidade de linhas da sua matriz 1 (1 a 15) : ");
+        if (scanf("%d", linhas) != 1)
+            return 1;
+
+        printf("Escolha a quantidade de linhas da sua matriz 2 (1 a 15) : ");
+        if (scanf("%d", linhas_2) != 1)
+            return 1;
+
+        printf("Escolha a quantidade de colunas da sua matriz 1 (1 a 15) : ");
+        if (scanf("%d", colunas) != 1)
+            return 1;
+
+        printf("Escolha a quantidade de colunas da sua matriz 2 (1 a 15) : ");
+        if (scanf("%d", colunas_2) != 1)
+            return 1;
+
+        while (*linhas > MAX || *colunas > MAX || *linhas_2 > MAX || *colunas_2 > MAX ||
+               *linhas <= 0 || *colunas <= 0 || *linhas_2 <= 0 || *colunas_2 <= 0)
+        {
+            printf("=============================================\n");
+            printf("! Os valores devem estar dentro do limite ! \n");
+            printf("=============================================\n");
+
+            printf("Escolha a quantidade de linhas da sua matriz 1 (1 a 15) : ");
+            if (scanf("%d", linhas) != 1)
+                return 1;
+
+            printf("Escolha a quantidade de linhas da sua matriz 2 (1 a 15) : ");
+            if (scanf("%d", linhas_2) != 1)
+                return 1;
+
+            printf("Escolha a quantidade de colunas da sua matriz 1 (1 a 15) : ");
+            if (scanf("%d", colunas) != 1)
+                return 1;
+
+            printf("Escolha a quantidade de colunas da sua matriz 2 (1 a 15) : ");
+            if (scanf("%d", colunas_2) != 1)
+                return 1;
+        }
+
+        printf("=============================================\n");
+        printf("         Preenchimento da 1 matriz          \n");
+        printf("=============================================\n");
+
+        for (i = 0; i < *linhas; i++)
+        {
+            for (j = 0; j < *colunas; j++)
+            {
+                printf("Digite o valor para posicao (1 matriz)[%d][%d]: ", i + 1, j + 1);
+                if (scanf("%lf", &matriz[i][j]) != 1)
+                    return 1;
+            }
+        }
+
+        printf("=============================================\n");
+        printf("         Preenchimento da 2 matriz          \n");
+        printf("=============================================\n");
+
+        for (i = 0; i < *linhas_2; i++)
+        {
+            for (j = 0; j < *colunas_2; j++)
+            {
+                printf("Digite o valor para posicao (2 matriz)[%d][%d]: ", i + 1, j + 1);
+                if (scanf("%lf", &matrizB[i][j]) != 1)
+                    return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+int menu_reload(int *escolha, int *linhas, int *colunas, int *linhas_2, int *colunas_2, double *multiplicador, double matriz[MAX][MAX], double matrizB[MAX][MAX])
+{
+    int i, j;
+
+    printf("=============================================\n");
+    printf("        Escolha novamente a sua opção        \n");
+    printf("=============================================\n");
+    printf(" 1 - Adicao de matrizes;\n");
+    printf(" 2 - Subtracao de matrizes;\n");
+    printf(" 3 - Produto de um numero por uma matriz;\n");
+    printf(" 4 - Produto de matrizes;\n");
+    printf(" 5 - Calculo de Determinante;\n");
+    printf(" 6 - Matriz inversa;\n");
+    printf(" 7 - Matriz transposta;\n");
+    printf("=============================================\n");
+    printf("Escolha uma das operacoes (1 a 7): ");
+
+    if (scanf("%d", escolha) != 1)
+    {
+        printf("Entrada invalida!\n");
+        return 1;
+    }
+
+    printf("=============================================\n");
+
+    if (*escolha == 3 || *escolha == 5 || *escolha == 6 || *escolha == 7)
+    {
+        switch (*escolha)
+        {
+        case 3:
+            printf("Opcao escolhida: Produto de um numero por uma matriz\n");
+            printf("Por qual numero que vc deseja multiplicar a sua matriz? : ");
+            if (scanf("%lf", multiplicador) != 1)
+            {
+                printf("Entrada invalida!\n");
+                return 1;
+            }
+            break;
+        case 5:
+            printf("Opcao escolhida: Calculo de Determinante\n");
+            break;
+        case 6:
+            printf("Opcao escolhida: Matriz inversa\n");
+            break;
+        case 7:
+            printf("Opcao escolhida: Matriz transposta\n");
+            break;
+        }
+
+        printf("Escolha a quantidade de linhas da sua matriz (1 a 15) : ");
+        if (scanf("%d", linhas) != 1)
+        {
+            printf("Entrada invalida!\n");
+            return 1;
+        }
+        printf("Escolha a quantidade de colunas da sua matriz (1 a 15) : ");
+        if (scanf("%d", colunas) != 1)
+        {
+            printf("Entrada invalida!\n");
+            return 1;
+        }
+
+        while (*linhas > MAX || *colunas > MAX || *linhas <= 0 || *colunas <= 0)
+        {
+            printf("=============================================\n");
+            printf("! Os valores devem estar dentro do limite ! \n");
+            printf("=============================================\n");
+
+            printf("Escolha a quantidade de linhas da sua matriz (1 a 15) : ");
+            if (scanf("%d", linhas) != 1)
+                return 1;
+
+            printf("Escolha a quantidade de colunas da sua matriz (1 a 15) : ");
+            if (scanf("%d", colunas) != 1)
+                return 1;
+        }
+
+        for (i = 0; i < *linhas; i++)
+        {
+            for (j = 0; j < *colunas; j++)
+            {
+                printf("Digite o valor para posicao (1 matriz)[%d][%d]: ", i + 1, j + 1);
+                if (scanf("%lf", &matriz[i][j]) != 1)
+                {
+                    printf("Entrada invalida!\n");
+                    return 1;
+                }
+            }
+        }
+    }
+    else
+    {
+        switch (*escolha)
+        {
+        case 1:
+            printf("Opcao escolhida: Adicao de matrizes\n");
+            break;
+        case 2:
+            printf("Opcao escolhida: Subtracao de matrizes\n");
+            break;
+        case 4:
+            printf("Opcao escolhida: Produto de matrizes\n");
+            break;
+        default:
+            printf("Opcao invalida!\n");
+            return 1;
+        }
+
+        printf("Escolha a quantidade de linhas da sua matriz 1 (1 a 15) : ");
+        if (scanf("%d", linhas) != 1)
+            return 1;
+
+        printf("Escolha a quantidade de linhas da sua matriz 2 (1 a 15) : ");
+        if (scanf("%d", linhas_2) != 1)
+            return 1;
+
+        printf("Escolha a quantidade de colunas da sua matriz 1 (1 a 15) : ");
+        if (scanf("%d", colunas) != 1)
+            return 1;
+
+        printf("Escolha a quantidade de colunas da sua matriz 2 (1 a 15) : ");
+        if (scanf("%d", colunas_2) != 1)
+            return 1;
+
+        while (*linhas > MAX || *colunas > MAX || *linhas_2 > MAX || *colunas_2 > MAX ||
+               *linhas <= 0 || *colunas <= 0 || *linhas_2 <= 0 || *colunas_2 <= 0)
+        {
+            printf("=============================================\n");
+            printf("! Os valores devem estar dentro do limite ! \n");
+            printf("=============================================\n");
+
+            printf("Escolha a quantidade de linhas da sua matriz 1 (1 a 15) : ");
+            if (scanf("%d", linhas) != 1)
+                return 1;
+
+            printf("Escolha a quantidade de linhas da sua matriz 2 (1 a 15) : ");
+            if (scanf("%d", linhas_2) != 1)
+                return 1;
+
+            printf("Escolha a quantidade de colunas da sua matriz 1 (1 a 15) : ");
+            if (scanf("%d", colunas) != 1)
+                return 1;
+
+            printf("Escolha a quantidade de colunas da sua matriz 2 (1 a 15) : ");
+            if (scanf("%d", colunas_2) != 1)
+                return 1;
+        }
+
+        printf("=============================================\n");
+        printf("         Preenchimento da 1 matriz          \n");
+        printf("=============================================\n");
+
+        for (i = 0; i < *linhas; i++)
+        {
+            for (j = 0; j < *colunas; j++)
+            {
+                printf("Digite o valor para posicao (1 matriz)[%d][%d]: ", i + 1, j + 1);
+                if (scanf("%lf", &matriz[i][j]) != 1)
+                    return 1;
+            }
+        }
+
+        printf("=============================================\n");
+        printf("         Preenchimento da 2 matriz          \n");
+        printf("=============================================\n");
+
+        for (i = 0; i < *linhas_2; i++)
+        {
+            for (j = 0; j < *colunas_2; j++)
+            {
+                printf("Digite o valor para posicao (2 matriz)[%d][%d]: ", i + 1, j + 1);
+                if (scanf("%lf", &matrizB[i][j]) != 1)
+                    return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+int main(void)
+{
+    int escolha = 0;
+    int linhas = 0, colunas = 0, linhas_2 = 0, colunas_2 = 0;
+    double multiplicador = 0;
+    double matriz[MAX][MAX], matrizB[MAX][MAX], resultado[MAX][MAX];
+    int verificacao = 0;
+
+    if (menu(&escolha, &linhas, &colunas, &linhas_2, &colunas_2, &multiplicador, matriz, matrizB) != 0)
+    {
+        return 1;
+    }
+
+    while (verificacao == 0)
+    {
+        /* Nesse switch, implementaremos as operacoes com as matrizes , ele funciona chamando cada função correta */
+        switch (escolha)
+        {
+        case 1:
+            if (linhas != linhas_2 || colunas != colunas_2)
+            {
+                printf("Erro: Para somar, as matrizes precisam ter a mesma quantidade de linhas e colunas!\n");
+                break;
+            }
+            somar_matrizes(matriz, matrizB, resultado, &linhas, &colunas);
+            printf("============= Deseja continuar com o programa? (1 - Nao / 0 - Sim) : ");
+            scanf("%d", &verificacao);
+            if (verificacao == 1)
+            {
+                printf("============ Finalizando programa ... \n");
+                return 0;
+            }
+            break;
+        case 2:
+            printf("Subtracao de matrizes ainda nao implementada.\n");
+            printf("============= Deseja continuar com o programa? (1 - Nao / 0 - Sim) : ");
+            scanf("%d", &verificacao);
+            if (verificacao == 1)
+            {
+                printf("============ Finalizando programa ... \n");
+                return 0;
+            }
+            break;
+        case 3:
+            printf("Produto por escalar ainda nao implementado.\n");
+            printf("============= Deseja continuar com o programa? (1 - Nao / 0 - Sim) : ");
+            scanf("%d", &verificacao);
+            if (verificacao == 1)
+            {
+                printf("============ Finalizando programa ... \n");
+                return 0;
+            }
+            break;
+        case 4:
+            printf("Produto de matrizes ainda nao implementado.\n");
+            printf("============= Deseja continuar com o programa? (1 - Nao / 0 - Sim) : ");
+            scanf("%d", &verificacao);
+            if (verificacao == 1)
+            {
+                printf("============ Finalizando programa ... \n");
+                return 0;
+            }
+            break;
+        case 5:
+            determinate_matriz(&linhas, &colunas, matriz);
+            printf("============= Deseja continuar com o programa? (1 - Nao / 0 - Sim) : ");
+            scanf("%d", &verificacao);
+            if (verificacao == 1)
+            {
+                printf("============ Finalizando programa ... \n");
+                return 0;
+            }
+            break;
+        case 6:
+            calcular_matriz_inversa(matriz, resultado, &linhas, &colunas);
+            printf("============= Deseja continuar com o programa? (1 - Nao / 0 - Sim) : ");
+            scanf("%d", &verificacao);
+            if (verificacao == 1)
+            {
+                printf("============ Finalizando programa ... \n");
+                return 0;
+            }
+            break;
+        case 7:
+            printf("Matriz transposta ainda nao implementada.\n");
+            printf("============= Deseja continuar com o programa? (1 - Nao / 0 - Sim) : ");
+            scanf("%d", &verificacao);
+            if (verificacao == 1)
+            {
+                printf("============ Finalizando programa ... \n");
+                return 0;
+            }
+            break;
+        }
+        if (verificacao == 0)
+        {
+            if (menu_reload(&escolha, &linhas, &colunas, &linhas_2, &colunas_2, &multiplicador, matriz, matrizB) != 0)
+            {
+                return 1;
+            }
+        }
+        else
+        {
+            printf("Programa encerrado.\n");
+            return 0;
+        }
+    }
+    return 0;
 }
